@@ -135,10 +135,35 @@ class Messages:
             all_messages.append(loaded_message)
         return all_messages
 
+    def save_to_db(self, cursor):
+        if self._id == -1:
+            sql = "INSERT INTO messages(from_id, to_id, text) VALUES (%s, %s, %s) RETURNING id"
+            values = (self.from_id, self.to_id, self.text)
+            cursor.execute(sql, values)
+            self._id = cursor.fetchone()[0]
+            return True
+        else:
+            sql = "UPDATE messages SET from_id = %s, to_id = %s, text = %s WHERE id = %s"
+            values = (self.from_id, self.to_id, self.text, self._id)
+            cursor.execute(sql, values)
+            return True
+
+    def delete_message(self, cursor):
+        sql = "DELETE messages WHERE id = %s"
+        cursor.execute(sql, self._id)
+        self._id = -1
+
 
 
 #FOR TESTING ONLY
 from psycopg2 import connect
+
+message_1 = Messages(15, 8)
+message_1.text = 'This is a random message'
+print(message_1._id)
+
+
+
 try:
     conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
     conn.autocommit = True
@@ -147,6 +172,7 @@ try:
     user_messages = Messages.load_messages_by_sender_id(cursor, 3)
     user_messages_2 = Messages.load_messages_by_receip_id(cursor, 6)
     user_messages_3 = Messages.load_messages_by_receip_id(cursor, 10)
+    Messages.save_to_db(message_1, cursor)
 except Exception as e:
     print(e)
 
@@ -167,3 +193,14 @@ print('*' * 50)
 
 for message in user_messages_3:
     print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
+
+message_1.text = 'A small Change'
+print(message_1._id)
+
+try:
+    conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
+    conn.autocommit = True
+    cursor = conn.cursor()
+    Messages.save_to_db(message_1, cursor)
+except Exception as e:
+    print(e)
