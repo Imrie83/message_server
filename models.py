@@ -1,5 +1,5 @@
 class Users:
-    def __init__(self, username, password, salt=''):
+    def __init__(self, username='', password='', salt=''):
         self._id = -1
         self.username = username
         self._hashed_password = password    # TODO setup password hashing!
@@ -32,8 +32,16 @@ class Users:
 
 
     @staticmethod
-    def load_user_by_name(cursor):          # TODO set method loading users by name
-        pass
+    def load_user_by_name(cursor, username):
+        sql = "SELECT id, username, hashed_password FROM users WHERE username = %s"
+        cursor.execute(sql, (username,))
+        data =cursor.fetchone()
+        if data:
+            id_, username, hashed_password = data
+            loaded_user = Users(username)
+            loaded_user._id = id_
+            loaded_user.hashed_password = hashed_password
+        return loaded_user
 
     @staticmethod
     def load_user_by_id(cursor):            # TODO set method loading users by id
@@ -50,25 +58,25 @@ class Users:
 # For testing only!
 from psycopg2 import connect
 
-test_case = Users('test_dummy', 'not a strong password')
-test_case_2 = Users('Dan', 'Some Random Passowrd')
-print(test_case_2.username)
-print(test_case_2.hashed_password)
-print(test_case_2._id)
-test_case.username = 'Marcin'
-test_case.hashed_password = 'my_test_password'
-print(test_case.hashed_password)
-print(test_case.username)
-print(test_case._id)
-
+# test_case = Users('test_dummy', 'not a strong password')
+# test_case_2 = Users('Dan', 'Some Random Passowrd')
+# print(test_case_2.username)
+# print(test_case_2.hashed_password)
+# print(test_case_2._id)
+# test_case.username = 'Marcin'
+# test_case.hashed_password = 'my_test_password'
+# print(test_case.hashed_password)
+# print(test_case.username)
+# print(test_case._id)
+#
 try:
     conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
     conn.autocommit = True
     cursor = conn.cursor()
-    Users.save_to_db(test_case, cursor)
-    Users.save_to_db(test_case_2, cursor)
+    new_user = Users.load_user_by_name(cursor, 'test 5')
 except Exception as e:
     print(e)
 
-print(test_case._id)
-print(test_case_2._id)
+print(new_user._id)
+print(new_user.username)
+print(new_user.hashed_password)
