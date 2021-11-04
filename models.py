@@ -54,8 +54,18 @@ class Users:
         return loaded_user
 
     @staticmethod
-    def load_all_users(cursor):             # TODO set method loading all users
-        pass
+    def load_all_users(cursor):
+        user_list = []
+        sql = "SELECT id, username, hashed_password FROM users"
+        cursor.execute(sql)
+        data = cursor.fetchall()
+
+        for row in data:
+            id_, username, hashed_password = row
+            loaded_user = Users(username, hashed_password)
+            loaded_user._id = id_
+            user_list.append(loaded_user)
+        return user_list
 
     def delete_user(self, cursor):          # TODO set method deleting user
         pass
@@ -91,3 +101,17 @@ print('-'*10)
 print(new_user_2._id)
 print(new_user_2.username)
 print(new_user_2.hashed_password)
+new_user_2.username = 'Dan Abnett'
+try:
+    conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
+    conn.autocommit = True
+    cursor = conn.cursor()
+    Users.save_to_db(new_user_2, cursor)
+except Exception as e:
+    print(e)
+print(new_user_2._id)
+print(new_user_2.username)
+print(new_user_2.hashed_password)
+all_users = (Users.load_all_users(cursor))
+for user in all_users:
+    print(user.username, user.hashed_password, user._id)
