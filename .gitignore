@@ -138,4 +138,4 @@ dmypy.json
 cython_debug/
 
 # README file
-README.md
+TASK_README.md
