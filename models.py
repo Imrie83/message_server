@@ -38,14 +38,20 @@ class Users:
         data =cursor.fetchone()
         if data:
             id_, username, hashed_password = data
-            loaded_user = Users(username)
+            loaded_user = Users(username, hashed_password)
             loaded_user._id = id_
-            loaded_user.hashed_password = hashed_password
         return loaded_user
 
     @staticmethod
-    def load_user_by_id(cursor):            # TODO set method loading users by id
-        pass
+    def load_user_by_id(cursor, id_):
+        sql = "SELECT id, username, hashed_password FROM users WHERE id = %s"
+        cursor.execute(sql, (id_,))
+        data = cursor.fetchone()
+        if data:
+            id_, username, hashed_password = data
+            loaded_user = Users(username, hashed_password)
+            loaded_user._id = id_
+        return loaded_user
 
     @staticmethod
     def load_all_users(cursor):             # TODO set method loading all users
@@ -74,9 +80,14 @@ try:
     conn.autocommit = True
     cursor = conn.cursor()
     new_user = Users.load_user_by_name(cursor, 'test 5')
+    new_user_2 = Users.load_user_by_id(cursor, 14)
 except Exception as e:
     print(e)
 
 print(new_user._id)
 print(new_user.username)
 print(new_user.hashed_password)
+print('-'*10)
+print(new_user_2._id)
+print(new_user_2.username)
+print(new_user_2.hashed_password)
