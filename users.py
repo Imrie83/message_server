@@ -93,6 +93,28 @@ def delete_user(username, password):
         return 'User has been deleted.'
 
 
+def list_all_users():
+
+    try:
+        conn = connect(user=USER, password=PASSWORD, host=HOST, dbname=DB)
+        conn.autocommit = True
+        cursor = conn.cursor()
+    except OperationalError as e:
+        return 'Connection error', e
+
+    users = Users.load_all_users(cursor)
+
+    # TODO: create "table" displaying evensly spaced user details
+    for user in users:
+        print(f'''ID: {user.user_id}
+Username: {user.username}
+{'-'*30}''')
+
+
+# TODO: Set parser help on incorrect argument
+
+
+
 # Tests
 # TODO: Learn how to write proper unittests...
 some_user = create_user('TANK99', 'password_2')
@@ -109,3 +131,6 @@ print(edit_password('TANK3', 'password', 'some_new_pass'))
 print(delete_user('TANK99', 'pass'))
 print(delete_user('TANK98', 'pass'))
 print(delete_user('TANK99', 'password_2'))
+print('*'*50)
+list_all_users()
+print(parse_help())
