@@ -1,3 +1,5 @@
+# TODO: Create docstrings and comments for classes/ methods
+
 class Users:
     def __init__(self, username='', password='', salt=''):
         self._id = -1
