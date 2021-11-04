@@ -78,6 +78,7 @@ class Users:
         cursor.execute(sql, (id_,))
         return True
 
+
 class Messages:
     def __init__(self, from_id, to_id):
         self._id = -1
@@ -120,7 +121,6 @@ class Messages:
             all_messages.append(loaded_message)
         return all_messages
 
-    # TODO load message_by_id
     @staticmethod
     def load_message_by_id(cursor, id_):
         sql = "SELECT id, from_id, to_id, creation_date, text FROM messages WHERE id = %s"
