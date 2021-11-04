@@ -78,4 +78,44 @@ class Users:
         cursor.execute(sql, (id_,))
         return True
 
-class
+class Messages:
+    def __init__(self, from_id, to_id):
+        self._id = -1
+        self.from_id = from_id
+        self.to_id = to_id
+        self.text = ''
+        self.creation_date = None
+
+    @property
+    def message_id(self):
+        return self._id
+
+    @staticmethod
+    def load_all_messages(cursor):
+        all_messages = []
+        sql = "SELECT id, from_id, to_id, creation_date, text FROM messages"
+        cursor.execute(sql)
+
+        for row in cursor.fetchall():
+            id_, from_id, to_id, creation_date, text = row
+            loaded_message = Messages(from_id, to_id)
+            loaded_message._id = id_
+            loaded_message.creation_date = creation_date
+            loaded_message.text = text
+            all_messages.append(loaded_message)
+        return all_messages
+
+
+#FOR TESTING ONLY
+from psycopg2 import connect
+try:
+    conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
+    conn.autocommit = True
+    cursor = conn.cursor()
+    all_messages = Messages.load_all_messages(cursor)
+except Exception as e:
+    print(e)
+
+print(all_messages)
+for message in all_messages:
+    print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
