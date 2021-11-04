@@ -27,7 +27,7 @@ create_db_sql = f"CREATE DATABASE {DB_NAME};"
 
 creat_users_sql = """CREATE TABLE Users(
 id serial PRIMARY KEY NOT NULL,
-username varchar(255),
+username varchar(255) UNIQUE ,
 hashed_password varchar(80)
 );
 """
