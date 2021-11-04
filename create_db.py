@@ -55,5 +55,5 @@ except DuplicateTable as e:                 # Catch exception if exists
 
 try:
     execute_db(create_messages_sql, DB_NAME)    # Create table
-except DuplicateTable as e:                     #Catch exception if exists
+except DuplicateTable as e:                     # Catch exception if exists
     print(f'Database already exist', e)
