@@ -120,6 +120,22 @@ class Messages:
             all_messages.append(loaded_message)
         return all_messages
 
+    @staticmethod
+    def load_messages_by_receip_id(cursor, sender_id):
+        all_messages = []
+        sql = "SELECT id, from_id, to_id, creation_date, text FROM messages WHERE to_id = %s"
+        cursor.execute(sql, (sender_id,))
+
+        for row in cursor.fetchall():
+            id_, from_id, to_id, creation_date, text = row
+            loaded_message = Messages(from_id, to_id)
+            loaded_message._id = id_
+            loaded_message.creation_date = creation_date
+            loaded_message.text = text
+            all_messages.append(loaded_message)
+        return all_messages
+
+
 
 #FOR TESTING ONLY
 from psycopg2 import connect
@@ -129,13 +145,25 @@ try:
     cursor = conn.cursor()
     all_messages = Messages.load_all_messages(cursor)
     user_messages = Messages.load_messages_by_sender_id(cursor, 3)
+    user_messages_2 = Messages.load_messages_by_receip_id(cursor, 6)
+    user_messages_3 = Messages.load_messages_by_receip_id(cursor, 10)
 except Exception as e:
     print(e)
 
-print(all_messages)
 for message in all_messages:
     print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
 
-print(user_messages)
+print('*'*50)
+
 for message in user_messages:
     print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
+
+print('*' * 50)
+
+for message in user_messages_2:
+    print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
+
+print('*' * 50)
+
+for message in user_messages_3:
+    print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
