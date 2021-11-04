@@ -67,8 +67,12 @@ class Users:
             user_list.append(loaded_user)
         return user_list
 
-    def delete_user(self, cursor):          # TODO set method deleting user
-        pass
+    def delete_user(self, cursor):
+        sql = "DELETE FROM users WHERE id = %s"
+        cursor.execute(sql, (self._id,))
+        self._id = -1
+        return Trues
+
 
 
 # For testing only!
@@ -115,3 +119,15 @@ print(new_user_2.hashed_password)
 all_users = (Users.load_all_users(cursor))
 for user in all_users:
     print(user.username, user.hashed_password, user._id)
+
+try:
+    conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
+    conn.autocommit = True
+    cursor = conn.cursor()
+    new_user_2.delete_user(cursor)
+except Exception as e:
+    print(e)
+
+print(new_user_2._id)
+print(new_user_2.username)
+print(new_user_2.hashed_password)
