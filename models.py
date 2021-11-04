@@ -71,7 +71,13 @@ class Users:
         sql = "DELETE FROM users WHERE id = %s"
         cursor.execute(sql, (self._id,))
         self._id = -1
-        return Trues
+        return True
+
+    @staticmethod
+    def delete_user_by_id(cursor, id_):
+        sql = "DELETE FROM users WHERE id = %s"
+        cursor.execute(sql, (id_,))
+        return True
 
 
 
@@ -94,7 +100,7 @@ try:
     conn.autocommit = True
     cursor = conn.cursor()
     new_user = Users.load_user_by_name(cursor, 'test 5')
-    new_user_2 = Users.load_user_by_id(cursor, 14)
+    new_user_2 = Users.load_user_by_id(cursor, 13)
 except Exception as e:
     print(e)
 
@@ -125,6 +131,7 @@ try:
     conn.autocommit = True
     cursor = conn.cursor()
     new_user_2.delete_user(cursor)
+    Users.delete_user_by_id(cursor, 9)
 except Exception as e:
     print(e)
 
