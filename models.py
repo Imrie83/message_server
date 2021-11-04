@@ -120,6 +120,21 @@ class Messages:
             all_messages.append(loaded_message)
         return all_messages
 
+    # TODO load message_by_id
+    @staticmethod
+    def load_message_by_id(cursor, id_):
+        sql = "SELECT id, from_id, to_id, creation_date, text FROM messages WHERE id = %s"
+        cursor.execute(sql, (id_, ))
+        data = cursor.fetchone()
+
+        if data:
+            id_, from_id, to_id, creation_date, text = data
+            load_message = Messages(from_id, to_id)
+            load_message._id = id_
+            load_message.creation_date = creation_date
+            load_message.text = text
+            return load_message
+
     @staticmethod
     def load_messages_by_receip_id(cursor, sender_id):
         all_messages = []
@@ -149,58 +164,75 @@ class Messages:
             return True
 
     def delete_message(self, cursor):
-        sql = "DELETE messages WHERE id = %s"
-        cursor.execute(sql, self._id)
+        sql = "DELETE FROM messages WHERE id = %s"
+        cursor.execute(sql, (self._id, ))
         self._id = -1
+        return True
+
+    @staticmethod
+    def delete_message_by_id(cursor, id_):
+        sql = "DELETE FROM messages WHERE id = %s"
+        cursor.execute(sql, (id_,))
+        return True
 
 
 
 #FOR TESTING ONLY
 from psycopg2 import connect
 
-message_1 = Messages(15, 8)
-message_1.text = 'This is a random message'
-print(message_1._id)
-
-
+# message_1 = Messages(15, 8)
+# message_1.text = 'This is a random message'
+# print(message_1._id)
 
 try:
     conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
     conn.autocommit = True
     cursor = conn.cursor()
-    all_messages = Messages.load_all_messages(cursor)
-    user_messages = Messages.load_messages_by_sender_id(cursor, 3)
-    user_messages_2 = Messages.load_messages_by_receip_id(cursor, 6)
-    user_messages_3 = Messages.load_messages_by_receip_id(cursor, 10)
-    Messages.save_to_db(message_1, cursor)
+    # all_messages = Messages.load_all_messages(cursor)
+    # user_messages = Messages.load_messages_by_sender_id(cursor, 3)
+    # user_messages_2 = Messages.load_messages_by_receip_id(cursor, 6)
+    # user_messages_3 = Messages.load_messages_by_receip_id(cursor, 10)
+    # Messages.save_to_db(message_1, cursor)
+    new_test_message = Messages.load_message_by_id(cursor, 3)
 except Exception as e:
     print(e)
+#
+# for message in all_messages:
+#     print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
+#
+# print('*'*50)
+#
+# for message in user_messages:
+#     print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
+#
+# print('*' * 50)
+#
+# for message in user_messages_2:
+#     print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
+#
+# print('*' * 50)
+#
+# for message in user_messages_3:
+#     print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
+#
+# message_1.text = 'A small Change'
+# print(message_1._id)
+#
+# try:
+#     conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
+#     conn.autocommit = True
+#     cursor = conn.cursor()
+#     Messages.save_to_db(message_1, cursor)
+# except Exception as e:
+#     print(e)
 
-for message in all_messages:
-    print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
-
-print('*'*50)
-
-for message in user_messages:
-    print(message._id,message.from_id, message.to_id, message.creation_date, message.text)
-
-print('*' * 50)
-
-for message in user_messages_2:
-    print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
-
-print('*' * 50)
-
-for message in user_messages_3:
-    print(message._id, message.from_id, message.to_id, message.creation_date, message.text)
-
-message_1.text = 'A small Change'
-print(message_1._id)
+print(new_test_message)
+print(new_test_message.text)
 
 try:
     conn = connect(user="postgres", password="coderslab", host="localhost", dbname="message_db")
     conn.autocommit = True
     cursor = conn.cursor()
-    Messages.save_to_db(message_1, cursor)
+    Messages.delete_message_by_id(cursor, 1)
 except Exception as e:
     print(e)
