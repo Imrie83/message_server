@@ -1,7 +1,7 @@
 import argparse
 from models import Users, Messages
 from psycopg2 import connect, OperationalError
-from psycopg2.errors import UniqueViolation
+
 
 USER = 'postgres'
 PASSWORD = 'coderslab'
@@ -68,41 +68,28 @@ def send_message(sender, password, receiver, message):
             return 'Message sent successfully'
 
 
-
 # TODO: Set parser help on incorrect argument
 
 if __name__ == '__main__':
 
-    m = (display_messages('test 5', 'asgdfs a3245'))
-    for i in m:
-        print(i)
-    n = display_messages('test', 'aewstfgasdf')
-    if not n:
-        print('No Messages')
-    else:
-        for i in n:
-            print(i)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-u', '--username', help='username')
+    parser.add_argument('-p', '--password', help='password - minimum 8 characters')
+    parser.add_argument('-t', '--to', help='send message TO')
+    parser.add_argument('-l', '--list', help='user list', action='store_true')
+    parser.add_argument('-s', '--send', help='delete user')
 
-    print(send_message('test 5', 'asgdfs a3245', 'Marcin22',\
-                       'This is a random message to be sent lkasejf;l salkwasejro;awieujr sdaifo jawoiperu jsladk;fj \
-                       ao;weiu jraslkef ja;woij 3efoiwaejt flkjsdrhfg lkjaewh talw3ehf lksadrjawslkje htfgawoueeh \
-                       tiouwahefgkljsdarh glkjaershg askj hgfkljas hgsklaskej hfkljasdh s a sdaj'))
+    args = parser.parse_args()
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('-u', '--username', help='username')
-    # parser.add_argument('-p', '--password', help='password - minimum 8 characters')
-    # parser.add_argument('-t', '--to', help='send message TO')
-    # parser.add_argument('-l', '--list', help='user list', action='store_true')
-    # parser.add_argument('-s', '--send', help='delete user', action='store_true')
-    #
-    # args = parser.parse_args()
-    #
-    # # TODO: clean argument parsing!
-    # if args.list:
-    #     list_all_users()
-    # if args.username and args.password and not args.edit and not args.delete:
-    #     print(create_user(args.username, args.password))
-    # if args.username and args.password and args.edit and args.new_pass:
-    #     print(edit_password(args.username, args.password, args.new_pass))
-    # if args.username and args.password and args.delete:
-    #     print(delete_user(args.username, args.password))
+    # TODO: clean argument parsing!
+
+    if args.username and args.password and args.list and not (args.to or args.send):
+        to_display = display_messages(args.username, args.password)
+        if not to_display:
+            print('There are no messages to display for this user')
+        else:
+            for message in to_display:
+                print(message)
+
+    elif args.username and args.password and args.to and args.send:
+        print(send_message(args.username, args.password, args.to, args.send))
