@@ -1,5 +1,5 @@
 import argparse
-from models import Users, Messages
+from models import Users
 from psycopg2 import connect, OperationalError
 from psycopg2.errors import UniqueViolation
 
@@ -7,9 +7,6 @@ USER = 'postgres'
 PASSWORD = 'coderslab'
 HOST = 'localhost'
 DB = 'message_db'
-
-# display parser help
-# parser.print_help()
 
 # TODO Add exception handling
 # TODO Add additionall functionality
