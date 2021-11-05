@@ -19,12 +19,14 @@ class Users:
 
     @hashed_password.setter
     def hashed_password(self, new_pass):
-        self._hashed_password = crypto.hash_password(new_pass)
+        self._hashed_password = new_pass
 
     def save_to_db(self, cursor):
         if self._id == -1:
             sql = "INSERT INTO users(username, hashed_password) VALUES (%s, %s) RETURNING id"
             values = (self.username, self._hashed_password)
+            print(self._hashed_password)
+            print(self.hashed_password)
             cursor.execute(sql, values)
             self._id = cursor.fetchone()[0]
             return True
@@ -41,8 +43,9 @@ class Users:
         data = cursor.fetchone()
         if data:
             id_, username, hashed_password = data
-            loaded_user = Users(username, hashed_password)
+            loaded_user = Users(username)
             loaded_user._id = id_
+            loaded_user.hashed_password = hashed_password
             return loaded_user
 
     @staticmethod
@@ -52,8 +55,9 @@ class Users:
         data = cursor.fetchone()
         if data:
             id_, username, hashed_password = data
-            loaded_user = Users(username, hashed_password)
+            loaded_user = Users(username)
             loaded_user._id = id_
+            loaded_user.hashed_password = hashed_password
             return loaded_user
 
     @staticmethod
@@ -65,8 +69,9 @@ class Users:
 
         for row in data:
             id_, username, hashed_password = row
-            loaded_user = Users(username, hashed_password)
+            loaded_user = Users(username)
             loaded_user._id = id_
+            loaded_user.hashed_password = hashed_password
             user_list.append(loaded_user)
         return user_list
 
