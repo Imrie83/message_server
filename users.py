@@ -158,11 +158,8 @@ def list_all_users():
         - Iterates through list
         - For each element in list prints out user ID and Username
 
-    :param str username: user name
-    :param str password: password for the user account, not hashed
-
     :rtype: str
-    :return: Messages depending whether operation was successful or ended prematurely
+    :return: Outputs a list of users
     """
 
     # Connecto to DB
@@ -214,8 +211,6 @@ if __name__ == '__main__':
         if args.list:   # If -l or --list in arguments display list of users
             list_all_users()
 
-    except Exception as e:     # if no correct arguments detected (errors out) display help
-    except Exception as e:     # if no correct arguments detected (errors out) display help
-        # print(e)
-        # parser.print_help()
-
+    # TODO: create a propper exception
+    except:     # if no correct arguments detected (errors out) display help
+        parser.print_help()
