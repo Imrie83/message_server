@@ -27,7 +27,7 @@ def display_messages(username, password):
     if not user:
         conn.close()
         return 'User does not exist'
-    elif not user.hashed_password == password:
+    elif not crypto.check_password(password, user.hashed_password):
         conn.close()
         return 'Incorrect Password'
     else:
@@ -51,7 +51,7 @@ def send_message(sender, password, receiver, message):
     if not sender:
         conn.close()
         return 'User does not exist'
-    elif not sender.hashed_password == password:
+    elif not crypto.check_password(password, sender.hashed_password):
         conn.close()
         return 'Incorrect Password'
     else:

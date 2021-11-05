@@ -2,6 +2,7 @@ import argparse
 from models import Users
 from psycopg2 import connect, OperationalError
 from psycopg2.errors import UniqueViolation
+import crypto
 
 USER = 'postgres'
 PASSWORD = 'coderslab'
@@ -43,19 +44,19 @@ def edit_password(username, password, new_pass=''):
     except OperationalError as e:
         return 'Connection error', e
 
+    # TODO Figure out password checks
     user = Users.load_user_by_name(cursor, username)
-
     if not user:
         return 'User does not exist in database'
 
-    elif not user.hashed_password == password:
+    elif not crypto.check_password(password, user.hashed_password):
         return 'Incorrect Password'
 
     elif len(new_pass) < 8:
         return 'New password too short - minimum 8 characters required'
 
     else:
-        user.hashed_password = new_pass
+        user.hashed_password = crypto.hash_password(new_pass)
         user.save_to_db(cursor)
 
     return 'Password changed successfully'
@@ -75,7 +76,7 @@ def delete_user(username, password):
     if not user:
         return 'User does not exist'
 
-    elif not user.hashed_password == password:
+    elif not crypto.check_password(password, user.hashed_password):
         return 'Incorrect Password'
 
     else:
@@ -94,7 +95,7 @@ def list_all_users():
 
     users = Users.load_all_users(cursor)
 
-    # TODO: create "table" displaying evensly spaced user details
+    # TODO: create "table" displaying evenly spaced user details
     for user in users:
         print(f'''ID: {user.user_id}
 Username: {user.username}
@@ -138,7 +139,5 @@ if __name__ == '__main__':
 # print(edit_password('TANK4', 'test'))
 # print(edit_password('TANK3', 'password', 'some_new_pass'))
 # print(delete_user('TANK99', 'pass'))
-# print(delete_user('TANK98', 'pass'))
-# print(delete_user('TANK99', 'password_2'))
-# print('*'*50)
-# list_all_users()
+# print(delete
+
