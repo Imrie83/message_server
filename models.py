@@ -1,4 +1,5 @@
 # TODO: Create docstrings and comments for classes/ methods
+# TODO: Look if methods output required data type? (may need to output lists of elements instead of objects?)
 import crypto
 
 
@@ -187,16 +188,3 @@ class Messages:
         sql = "DELETE FROM messages WHERE id = %s"
         cursor.execute(sql, (id_,))
         return True
-
-
-USER = 'postgres'
-PASSWORD = 'coderslab'
-HOST = 'localhost'
-DB = 'message_db'
-from psycopg2 import connect, OperationalError
-try:
-    conn = connect(user=USER, password=PASSWORD, host=HOST, dbname=DB)
-    conn.autocommit = True
-    cursor = conn.cursor()
-except OperationalError as e:
-    print('Connection error', e)
