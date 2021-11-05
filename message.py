@@ -73,11 +73,11 @@ def send_message(sender, password, receiver, message):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--username', help='username')
+    parser.add_argument('-u', '--username', help='User name')
     parser.add_argument('-p', '--password', help='password - minimum 8 characters')
     parser.add_argument('-t', '--to', help='send message TO')
-    parser.add_argument('-l', '--list', help='user list', action='store_true')
-    parser.add_argument('-s', '--send', help='delete user')
+    parser.add_argument('-l', '--list', help='list of messages', action='store_true')
+    parser.add_argument('-s', '--send', help='Message to be sent')
 
     args = parser.parse_args()
 
@@ -93,3 +93,6 @@ if __name__ == '__main__':
 
     elif args.username and args.password and args.to and args.send:
         print(send_message(args.username, args.password, args.to, args.send))
+
+    else:
+        parser.print_help()
