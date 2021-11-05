@@ -11,6 +11,7 @@ DB = 'message_db'
 # TODO Add exception handling
 # TODO Add additionall functionality
 # TODO create class to connecto to database!
+# TODO close connections in functions!
 
 
 def create_user(username, password):
