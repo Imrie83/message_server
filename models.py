@@ -111,18 +111,24 @@ class Messages:
     @staticmethod
     def load_messages_by_sender_id(cursor, sender_id):
         all_messages = []
-        sql = "SELECT id, from_id, to_id, creation_date, text FROM messages WHERE from_id = %s"
+        sql = """SELECT messages.id, messages.from_id, messages.to_id, messages.creation_date, messages.text, users.username
+                FROM messages JOIN users on users.id = messages.to_id WHERE messages.from_id = %s"""
         cursor.execute(sql, (sender_id,))
 
         for row in cursor.fetchall():
-            id_, from_id, to_id, creation_date, text = row
-            loaded_message = Messages(from_id, to_id)
-            loaded_message._id = id_
-            loaded_message.creation_date = creation_date
-            loaded_message.text = text
-            all_messages.append(loaded_message)
+            # Changed method to return list of formatted messages
+            id_, from_id, to_id, creation_date, text, receive  = row
+            message = f'TO: {receive} \nDate: {creation_date} \nMessage: {text} \n{"-"*50}'
+            all_messages.append(message)
+            # loaded_message = Messages(from_id, to_id)
+            # loaded_message._id = id_
+            # loaded_message.creation_date = creation_date
+            # loaded_message.text = text
+            # loaded_message += receive
+            # all_messages.append(loaded_message)
         return all_messages
 
+# TODO: change methods to return tuples with messages, not Messages objects!
     @staticmethod
     def load_message_by_id(cursor, id_):
         sql = "SELECT id, from_id, to_id, creation_date, text FROM messages WHERE id = %s"
@@ -176,3 +182,16 @@ class Messages:
         sql = "DELETE FROM messages WHERE id = %s"
         cursor.execute(sql, (id_,))
         return True
+
+
+USER = 'postgres'
+PASSWORD = 'coderslab'
+HOST = 'localhost'
+DB = 'message_db'
+from psycopg2 import connect, OperationalError
+try:
+    conn = connect(user=USER, password=PASSWORD, host=HOST, dbname=DB)
+    conn.autocommit = True
+    cursor = conn.cursor()
+except OperationalError as e:
+    print('Connection error', e)
