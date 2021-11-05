@@ -25,8 +25,6 @@ class Users:
         if self._id == -1:
             sql = "INSERT INTO users(username, hashed_password) VALUES (%s, %s) RETURNING id"
             values = (self.username, self._hashed_password)
-            print(self._hashed_password)
-            print(self.hashed_password)
             cursor.execute(sql, values)
             self._id = cursor.fetchone()[0]
             return True
