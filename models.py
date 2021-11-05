@@ -1,10 +1,12 @@
 # TODO: Create docstrings and comments for classes/ methods
+import crypto
+
 
 class Users:
-    def __init__(self, username='', password='', salt=''):
+    def __init__(self, username='', password='', salt=None):
         self._id = -1
         self.username = username
-        self._hashed_password = password    # TODO setup password hashing!
+        self._hashed_password = crypto.hash_password(password, salt)
         self.salt = salt
 
     @property
@@ -17,7 +19,7 @@ class Users:
 
     @hashed_password.setter
     def hashed_password(self, new_pass):
-        self._hashed_password = new_pass    # TODO set up password hashing in setter!
+        self._hashed_password = crypto.hash_password(new_pass)
 
     def save_to_db(self, cursor):
         if self._id == -1:
@@ -117,7 +119,7 @@ class Messages:
 
         for row in cursor.fetchall():
             # Changed method to return list of formatted messages
-            id_, from_id, to_id, creation_date, text, receive  = row
+            id_, from_id, to_id, creation_date, text, receive = row
             message = f'TO: {receive} \nDate: {creation_date} \nMessage: {text} \n{"-"*50}'
             all_messages.append(message)
             # loaded_message = Messages(from_id, to_id)
