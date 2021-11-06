@@ -117,8 +117,8 @@ class Messages:
     @staticmethod
     def load_messages_by_sender_id(cursor, sender_id):
         all_messages = []
-        sql = """SELECT messages.id, messages.from_id, messages.to_id, messages.creation_date, messages.text, users.username
-                FROM messages JOIN users on users.id = messages.to_id WHERE messages.from_id = %s"""
+        sql = """SELECT messages.id, messages.from_id, messages.to_id, messages.creation_date, messages.text, 
+        users.username FROM messages JOIN users on users.id = messages.to_id WHERE messages.from_id = %s"""
         cursor.execute(sql, (sender_id,))
 
         for row in cursor.fetchall():
